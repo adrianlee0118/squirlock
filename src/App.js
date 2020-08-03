@@ -132,8 +132,8 @@ const Table = ({ data, pattern, onDismiss }) => (
       .filter((item) => item.Name.toLowerCase().includes(pattern.toLowerCase()))
       .map((item) => (
         <div key={item.Name} className="table-row">
-          <span>{item.Name}</span>
-          <span>
+          <span style={{ width: "50%" }}>{item.Name}</span>
+          <span style={{ width: "50%" }}>
             <Button onClick={() => onDismiss(item.Name)}>Dismiss</Button>
           </span>
         </div>
@@ -141,7 +141,7 @@ const Table = ({ data, pattern, onDismiss }) => (
   </div>
 );
 
-const Button = (onClick, className = "", children) => (
+const Button = ({ onClick, className = "", children }) => (
   <button onClick={onClick} className={className} type="button">
     {children}
   </button>
