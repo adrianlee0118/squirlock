@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 
@@ -34,11 +34,10 @@ const PARAM_QUERY = "q=";
 const PARAM_TYPE = "type=";
 const PARAM_INFO = "info=";
 const PARAM_LIMIT = "limit=";
-const PARAM_KEY = "k=";
+const PARAM_KEY = "k=12345678";
 
 const DEFAULT_QUERY = "Thor: Ragnarok";
 const YOUTUBE_PREFIX = "https://www.youtube.com/watch?v=";
-const API_KEY = "12345678";
 
 const hits = {
   Similar: {
@@ -99,45 +98,79 @@ const verbose_data = {
 };
 
 const MovieFinderClient = () => {
-  const [data, setData] = useState(hits.Similar.Results);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(DEFAULT_QUERY);
+  const [searchKey, setSearchKey] = useState("");
+
+  const needsToSearchTopStories = (searchTerm) => {
+    return !data[searchTerm];
+  };
+
+  const setSearchMovies = (newdata) => {
+    setData({ ...data, [searchKey]: newdata });
+  };
+
+  const fetchMovies = (term) => {
+    axios(`${PATH_BASE}?${PARAM_QUERY}${term}&${PARAM_KEY}`)
+      .then((result) => setSearchMovies(result.Similar.Results))
+      .catch((error) => error);
+  };
+
+  useEffect(() => {
+    setSearchKey(searchTerm);
+    fetchMovies(searchTerm);
+  });
+
   const onSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
+
   const onDismiss = (target) => {
-    const updatedData = data.filter((item) => item.Name !== target);
-    setData(updatedData);
+    const updatedData = data[searchKey].filter((item) => item.Name !== target);
+    setData({ ...data, [searchKey]: updatedData });
   };
+
+  const onSearchSubmit = (term) => {
+    setSearchKey(searchTerm);
+    if (needsToSearchTopStories(searchTerm)) {
+      fetchMovies(term);
+    }
+    event.preventDefault();
+  };
+
   return (
     <div className="page">
       <div className="interactions">
-        <Search value={searchTerm} onChange={onSearchChange}>
+        <Search
+          value={searchTerm}
+          onChange={onSearchChange}
+          onSubmit={onSearchSubmit}
+        >
           Search
         </Search>
       </div>
-      <Table data={data} pattern={searchTerm} onDismiss={onDismiss} />
+      <Table data={(data && data[searchKey]) || []} onDismiss={onDismiss} />
     </div>
   );
 };
 
-const Search = ({ value, onChange, children }) => (
-  <form>
-    {children} <input type="text" value={value} onChange={onChange} />
+const Search = ({ value, onChange, onSubmit, children }) => (
+  <form onSubmit={onSubmit}>
+    <input type="text" value={value} onChange={onChange} />
+    <button type="submit">{children}</button>
   </form>
 );
 
-const Table = ({ data, pattern, onDismiss }) => (
+const Table = ({ data, onDismiss }) => (
   <div className="table">
-    {data
-      .filter((item) => item.Name.toLowerCase().includes(pattern.toLowerCase()))
-      .map((item) => (
-        <div key={item.Name} className="table-row">
-          <span style={{ width: "50%" }}>{item.Name}</span>
-          <span style={{ width: "50%" }}>
-            <Button onClick={() => onDismiss(item.Name)}>Dismiss</Button>
-          </span>
-        </div>
-      ))}
+    {data.map((item) => (
+      <div key={item.Name} className="table-row">
+        <span style={{ width: "50%" }}>{item.Name}</span>
+        <span style={{ width: "50%" }}>
+          <Button onClick={() => onDismiss(item.Name)}>Dismiss</Button>
+        </span>
+      </div>
+    ))}
   </div>
 );
 
