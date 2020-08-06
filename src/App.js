@@ -34,11 +34,13 @@ const PARAM_QUERY = "q=";
 const PARAM_TYPE = "type=";
 const PARAM_INFO = "info=";
 const PARAM_LIMIT = "limit=";
-const PARAM_KEY = "k=12345678";
+const PARAM_KEY = "k=381161-Squirloc-344JJHC8";
 
 const DEFAULT_QUERY = "Thor: Ragnarok";
 const YOUTUBE_PREFIX = "https://www.youtube.com/watch?v=";
+const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
+/*
 const hits = {
   Similar: {
     Info: [{ Name: "Guardians Of The Galaxy Vol. 2", Type: "movie" }],
@@ -96,11 +98,13 @@ const verbose_data = {
     ],
   },
 };
+*/
 
 const MovieFinderClient = () => {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState(DEFAULT_QUERY);
   const [searchKey, setSearchKey] = useState("");
+  const [error, setError] = useState(null);
 
   const needsToSearchTopStories = (searchTerm) => {
     return !data[searchTerm];
@@ -110,16 +114,16 @@ const MovieFinderClient = () => {
     setData({ ...data, [searchKey]: newdata });
   };
 
-  const fetchMovies = (term) => {
-    axios(`${PATH_BASE}?${PARAM_QUERY}${term}&${PARAM_KEY}`)
-      .then((result) => setSearchMovies(result.Similar.Results))
-      .catch((error) => error);
+  const fetchMovies = (searchTerm) => {
+    axios(`${proxyurl}${PATH_BASE}?${PARAM_QUERY}${searchTerm}&${PARAM_KEY}`)
+      .then((result) => setSearchMovies(result.data.Similar.Results))
+      .catch((error) => setError(error));
   };
 
   useEffect(() => {
     setSearchKey(searchTerm);
     fetchMovies(searchTerm);
-  });
+  }, [searchKey]);
 
   const onSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -130,10 +134,10 @@ const MovieFinderClient = () => {
     setData({ ...data, [searchKey]: updatedData });
   };
 
-  const onSearchSubmit = (term) => {
+  const onSearchSubmit = (event) => {
     setSearchKey(searchTerm);
     if (needsToSearchTopStories(searchTerm)) {
-      fetchMovies(term);
+      fetchMovies(searchTerm);
     }
     event.preventDefault();
   };
@@ -149,7 +153,11 @@ const MovieFinderClient = () => {
           Search
         </Search>
       </div>
-      <Table data={(data && data[searchKey]) || []} onDismiss={onDismiss} />
+      {error ? (
+        <div className="interactions">Something went wrong.</div>
+      ) : (
+        <Table data={(data && data[searchKey]) || []} onDismiss={onDismiss} />
+      )}
     </div>
   );
 };
@@ -183,3 +191,5 @@ const Button = ({ onClick, className = "", children }) => (
 const App = () => <MovieFinderClient />;
 
 export default App;
+
+export { Button, Search, Table };
