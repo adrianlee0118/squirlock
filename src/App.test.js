@@ -45,7 +45,7 @@ describe("Button", () => {
 });
 
 describe("Table", () => {
-  const props = [
+  const data = [
     { Name: "Thor: Ragnarok", Type: "movie" },
     { Name: "Star Wars: The Last Jedi", Type: "movie" },
     { Name: "Spider-Man: Homecoming", Type: "movie" },
@@ -53,11 +53,11 @@ describe("Table", () => {
 
   it("renders without crashing", () => {
     const div = document.createElement(div);
-    ReactDOM.render(<Table {...props} />);
+    ReactDOM.render(<Table data={data} />, div);
   });
 
   test("it has a valid snapshot", () => {
-    const component = renderer.create(<Table {...props} />);
+    const component = renderer.create(<Table data={data} />);
     const tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });
