@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
+import { sortBy } from "lodash";
 import "./App.css";
 
 /*
@@ -101,12 +102,21 @@ const verbose_data = {
 };
 */
 
+//Add sort by date, director name as well
+const SORTS = {
+  NONE: (list) => list,
+  NAME: (list) => sortBy(list, "Name"),
+  TYPE: (list) => sortBy(list, "Type"),
+};
+
 const MovieFinderClient = () => {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState(DEFAULT_QUERY);
   const [searchKey, setSearchKey] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [sortKey, setSortKey] = useState("NONE");
+  const [isSortReverse, setIsSortReverse] = useState(false);
 
   const needsToSearchTopStories = (searchTerm) => {
     return !data[searchTerm];
@@ -146,6 +156,12 @@ const MovieFinderClient = () => {
     event.preventDefault();
   };
 
+  const onSort = (key) => {
+    const reverse = sortKey === key && !isSortReverse;
+    setIsSortReverse(reverse);
+    setSortKey(key);
+  };
+
   return (
     <div className="page">
       <div className="interactions">
@@ -160,7 +176,13 @@ const MovieFinderClient = () => {
       {error ? (
         <div className="interactions">Something went wrong.</div>
       ) : (
-        <Table data={(data && data[searchKey]) || []} onDismiss={onDismiss} />
+        <Table
+          data={(data && data[searchKey]) || []}
+          onDismiss={onDismiss}
+          sortKey={sortKey}
+          onSort={onSort}
+          isSortReverse={isSortReverse}
+        />
       )}
       <div className="interactions">
         {isLoading ? (
@@ -193,17 +215,35 @@ const Search = ({ value, onChange, onSubmit, children }) => {
   );
 };
 
-const Table = ({ data, onDismiss }) => (
-  <div className="table">
-    {data.map((item) => (
-      <div key={item.Name} className="table-row">
-        <span style={{ width: "50%" }}>{item.Name}</span>
+const Table = ({ data, onDismiss, sortKey, onSort, isSortReverse }) => {
+  const sortedData = SORTS[sortKey](data);
+  const reverseSortedData = isSortReverse ? sortedData.reverse() : sortedData;
+  return (
+    <div className="table">
+      <div className="table-header">
         <span style={{ width: "50%" }}>
-          <Button onClick={() => onDismiss(item.Name)}>Dismiss</Button>
+          <Sort sortKey={"NAME"} onSort={onSort} activeSortKey={sortKey}>
+            Title Name
+          </Sort>
         </span>
+        <span style={{ width: "50%" }}>Archive</span>
       </div>
-    ))}
-  </div>
+      {reverseSortedData.map((item) => (
+        <div key={item.Name} className="table-row">
+          <span style={{ width: "50%" }}>{item.Name}</span>
+          <span style={{ width: "50%" }}>
+            <Button onClick={() => onDismiss(item.Name)}>Dismiss</Button>
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const Sort = ({ sortKey, onSort, activeSortKey, children }) => (
+  <Button className="button-inline" onClick={() => onSort(sortKey)}>
+    {children}
+  </Button>
 );
 
 const Button = ({ onClick, className, children }) => (
