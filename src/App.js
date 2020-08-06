@@ -163,12 +163,32 @@ const MovieFinderClient = () => {
   );
 };
 
+const Search = ({ value, onChange, onSubmit, children }) => {
+  let input;
+  useEffect(() => {
+    if (input) input.focus();
+  }, []);
+  return (
+    <form onSubmit={onSubmit}>
+      <input
+        type="text"
+        value={value}
+        onChange={onChange}
+        ref={(el) => (input = el)}
+      />
+      <button type="submit">{children}</button>
+    </form>
+  );
+};
+
+/*
 const Search = ({ value, onChange, onSubmit, children }) => (
   <form onSubmit={onSubmit}>
     <input type="text" value={value} onChange={onChange} />
     <button type="submit">{children}</button>
   </form>
 );
+*/
 
 const Table = ({ data, onDismiss }) => (
   <div className="table">
