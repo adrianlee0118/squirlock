@@ -47,6 +47,11 @@ describe("Button", () => {
     const tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });
+
+  it("shows 1 button element", () => {
+    const element = shallow(<Button />);
+    expect(element.find("button").length).toBe(1);
+  });
 });
 
 describe("Table", () => {
