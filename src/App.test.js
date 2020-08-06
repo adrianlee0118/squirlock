@@ -32,7 +32,7 @@ describe("Search", () => {
 
 describe("Button", () => {
   it("renders without crashing", () => {
-    const div = document.createElement(div);
+    const div = document.createElement("div");
     ReactDOM.render(<Button>More</Button>, div);
     ReactDOM.unmountComponentAtNode(div);
   });
@@ -52,12 +52,12 @@ describe("Table", () => {
   ];
 
   it("renders without crashing", () => {
-    const div = document.createElement(div);
-    ReactDOM.render(<Table data={data} />, div);
+    const div = document.createElement("div");
+    ReactDOM.render(<Table {...data} />, div);
   });
 
   test("it has a valid snapshot", () => {
-    const component = renderer.create(<Table data={data} />);
+    const component = renderer.create(<Table {...data} />);
     const tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });
