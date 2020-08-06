@@ -61,6 +61,8 @@ describe("Table", () => {
       { Name: "Star Wars: The Last Jedi", Type: "movie" },
       { Name: "Spider-Man: Homecoming", Type: "movie" },
     ],
+    sortKey: "NAME",
+    isSortReverse: false,
   };
 
   it("renders without crashing", () => {

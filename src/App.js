@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { sortBy } from "lodash";
+import classNames from "classnames";
 import "./App.css";
 
 /*
@@ -240,11 +241,16 @@ const Table = ({ data, onDismiss, sortKey, onSort, isSortReverse }) => {
   );
 };
 
-const Sort = ({ sortKey, onSort, activeSortKey, children }) => (
-  <Button className="button-inline" onClick={() => onSort(sortKey)}>
-    {children}
-  </Button>
-);
+const Sort = ({ sortKey, onSort, activeSortKey, children }) => {
+  const sortClass = classNames("button-inline", {
+    "button-active": sortKey === activeSortKey,
+  });
+  return (
+    <Button className={sortClass} onClick={() => onSort(sortKey)}>
+      {children}
+    </Button>
+  );
+};
 
 const Button = ({ onClick, className, children }) => (
   <button onClick={onClick} className={className} type="button">
