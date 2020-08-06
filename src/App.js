@@ -106,6 +106,7 @@ const MovieFinderClient = () => {
   const [searchTerm, setSearchTerm] = useState(DEFAULT_QUERY);
   const [searchKey, setSearchKey] = useState("");
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const needsToSearchTopStories = (searchTerm) => {
     return !data[searchTerm];
@@ -113,9 +114,11 @@ const MovieFinderClient = () => {
 
   const setSearchMovies = (newdata) => {
     setData({ ...data, [searchKey]: newdata });
+    setIsLoading(false);
   };
 
   const fetchMovies = (searchTerm) => {
+    setIsLoading(true);
     axios(`${proxyurl}${PATH_BASE}?${PARAM_QUERY}${searchTerm}&${PARAM_KEY}`)
       .then((result) => setSearchMovies(result.data.Similar.Results))
       .catch((error) => setError(error));
@@ -159,6 +162,15 @@ const MovieFinderClient = () => {
       ) : (
         <Table data={(data && data[searchKey]) || []} onDismiss={onDismiss} />
       )}
+      <div className="interactions">
+        {isLoading ? (
+          <Loading />
+        ) : data && data[searchKey] && data[searchKey].length > 0 ? (
+          <div></div>
+        ) : (
+          <div>No matches found.</div>
+        )}
+      </div>
     </div>
   );
 };
@@ -181,15 +193,6 @@ const Search = ({ value, onChange, onSubmit, children }) => {
   );
 };
 
-/*
-const Search = ({ value, onChange, onSubmit, children }) => (
-  <form onSubmit={onSubmit}>
-    <input type="text" value={value} onChange={onChange} />
-    <button type="submit">{children}</button>
-  </form>
-);
-*/
-
 const Table = ({ data, onDismiss }) => (
   <div className="table">
     {data.map((item) => (
@@ -209,10 +212,13 @@ const Button = ({ onClick, className, children }) => (
   </button>
 );
 
+const Loading = () => <div>Loading...</div>;
+
 Button.defaultProps = {
   className: "",
 };
 
+//Needs to be changed for info=1 on TasteDive data
 Search.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
