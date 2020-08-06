@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import renderer from "react-test-renderer";
 import App, { Search, Button, Table } from "./App";
 
@@ -18,7 +19,7 @@ describe("App", () => {
 
 describe("Search", () => {
   it("renders without crashing", () => {
-    const div = document.createElement(div);
+    const div = document.createElement("div");
     ReactDOM.render(<Search>Search</Search>, div);
     ReactDOM.unmountComponentAtNode(div);
   });
@@ -45,19 +46,21 @@ describe("Button", () => {
 });
 
 describe("Table", () => {
-  const data = [
-    { Name: "Thor: Ragnarok", Type: "movie" },
-    { Name: "Star Wars: The Last Jedi", Type: "movie" },
-    { Name: "Spider-Man: Homecoming", Type: "movie" },
-  ];
+  const props = {
+    data: [
+      { Name: "Thor: Ragnarok", Type: "movie" },
+      { Name: "Star Wars: The Last Jedi", Type: "movie" },
+      { Name: "Spider-Man: Homecoming", Type: "movie" },
+    ],
+  };
 
   it("renders without crashing", () => {
     const div = document.createElement("div");
-    ReactDOM.render(<Table {...data} />, div);
+    ReactDOM.render(<Table {...props} />, div);
   });
 
   test("it has a valid snapshot", () => {
-    const component = renderer.create(<Table {...data} />);
+    const component = renderer.create(<Table {...props} />);
     const tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });
