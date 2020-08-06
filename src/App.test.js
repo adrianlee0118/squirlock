@@ -10,8 +10,22 @@ describe("App", () => {
   });
 
   test("has a valid snapshot", () => {
-    const compoent = renderer.create(<App />);
-    const tree = compoent.toJSON();
+    const component = renderer.create(<App />);
+    const tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+});
+
+describe("Search", () => {
+  it("renders without crashing", () => {
+    const div = document.createElement(div);
+    ReactDOM.render(<Search>Search</Search>, div);
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+  test("has a valid snapshot", () => {
+    const component = renderer.create(<Search>Search</Search>);
+    const tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });
 });
