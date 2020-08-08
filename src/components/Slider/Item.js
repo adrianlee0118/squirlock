@@ -6,7 +6,6 @@ import ShowDetailsButton from "";
 import Mark from "";
 
 import "./App.css";
-import { element } from "prop-types";
 
 const Item = ({ movie }) => (
   <SliderContext.Consumer>

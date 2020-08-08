@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import cx from "classnames";
 
-import SliderContext from "";
+import SliderContext from "./context";
 import Content from "";
-import SlideButton from "";
-import SliderWrapper from "";
-import useSliding from "";
-import useSizeElement from "";
+import SlideButton from "./SlideButton";
+import SliderWrapper from "./SliderWrapper";
+import useSliding from "./useSliding";
+import useSizeElement from "./useSizeElement";
 
 import "./App.css";
 
