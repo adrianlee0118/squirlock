@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import cx from "classnames";
-
 import SliderContext from "./context";
-import Content from "";
+import Content from "./Content";
 import SlideButton from "./SlideButton";
 import SliderWrapper from "./SliderWrapper";
 import useSliding from "./useSliding";
 import useSizeElement from "./useSizeElement";
-
-import "./App.css";
+import "./Slider.scss";
 
 const Slider = () => {
   const [currentSlide, setCurrentSlide] = useState(activeSlide);
