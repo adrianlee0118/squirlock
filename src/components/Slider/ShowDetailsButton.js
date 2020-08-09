@@ -1,5 +1,5 @@
 import React from "react";
-import IconArrowDown from "";
+import IconArrowDown from "./IconArrowDown";
 import "./ShowDetailsButton.scss";
 
 const ShowDetailsButton = ({ onClick }) => (
