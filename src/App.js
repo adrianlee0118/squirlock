@@ -102,7 +102,7 @@ const verbose_data = {
   },
 };
 
-SLIDER FORMAT
+******SLIDER FORMAT
 const movies = [
   {
     id: 1,
@@ -141,6 +141,12 @@ const movies = [
     title: 'Black mirror'
   }
 ];
+
+  <Slider>
+    {movies.map(movie => (
+      <Slider.Item movie={movie} key={movie.id}>item1</Slider.Item>
+    ))}
+  </Slider>
 */
 
 //Add sort by date, director name as well
