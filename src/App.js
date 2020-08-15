@@ -3,7 +3,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { sortBy } from "lodash";
 import classNames from "classnames";
-import "./App.css";
+import "./App.scss";
 
 /*
 Basic pattern
@@ -174,16 +174,23 @@ const MovieFinderClient = () => {
     setIsLoading(false);
   };
 
-  const fetchMovies = (searchTerm) => {
+  const fetchMovies = async (searchTerm) => {
     setIsLoading(true);
-    axios(`${proxyurl}${PATH_BASE}?${PARAM_QUERY}${searchTerm}&${PARAM_KEY}`)
-      .then((result) => setSearchMovies(result.data.Similar.Results))
-      .catch((error) => setError(error));
+    try {
+      const result = await axios(
+        `${proxyurl}${PATH_BASE}?${PARAM_QUERY}${searchTerm}&${PARAM_KEY}`
+      );
+      setSearchMovies(result.data.Similar.Results);
+    } catch (error) {
+      setError(error);
+    }
   };
 
   useEffect(() => {
     setSearchKey(searchTerm);
-    fetchMovies(searchTerm);
+    if (needsToSearchTopStories(searchTerm)) {
+      fetchMovies(searchTerm);
+    }
   }, [searchKey]);
 
   const onSearchChange = (event) => {
@@ -232,12 +239,11 @@ const MovieFinderClient = () => {
         />
       )}
       <div className="interactions">
-        {isLoading ? (
-          <Loading />
-        ) : data && data[searchKey] && data[searchKey].length > 0 ? (
-          <div></div>
+        {isLoading ? <Loading /> : <div></div>}
+        {!isLoading && data[searchKey] && data[searchKey].length === 0 ? (
+          <div>No results found.</div>
         ) : (
-          <div>No matches found.</div>
+          <div></div>
         )}
       </div>
     </div>
@@ -248,7 +254,7 @@ const Search = ({ value, onChange, onSubmit, children }) => {
   let input;
   useEffect(() => {
     if (input) input.focus();
-  }, []);
+  }, [input]);
   return (
     <form onSubmit={onSubmit}>
       <input
